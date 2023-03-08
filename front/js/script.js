@@ -51,5 +51,3 @@ function displayCanaps (canaps){
               <p class="productDescription">Dis enim malesuada risus sapien gravida nulla nisl arcu. Dis enim malesuada risus sapien gravida nulla nisl arcu.</p>
             </article>
           </a> */
-
-          
