@@ -7,13 +7,14 @@ function getId() {
 }
 
 // Définir les emplacements d'insertion des données
-// TODO: A transformer en fonction
-const imgKanap = document.querySelector(".item__img");
-const nomKanap = document.querySelector("#title");
-const prixKanap = document.querySelector("#price");
-const descriptionKanap = document.querySelector("#description");
-const optionKanap = document.querySelector("#colors");
-const qtyKanap = document.querySelector("#quantity");
+function displayProduct() {
+  const imgKanap = document.querySelector(".item__img");
+  const nomKanap = document.querySelector("#title");
+  const prixKanap = document.querySelector("#price");
+  const descriptionKanap = document.querySelector("#description");
+  const optionKanap = document.querySelector("#colors");
+  const qtyKanap = document.querySelector("#quantity");
+}
 
 // Récupérer les données de l'API associées à l'ID
 function fetchProductInfo(id) {
