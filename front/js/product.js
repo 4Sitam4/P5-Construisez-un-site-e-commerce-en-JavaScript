@@ -6,6 +6,16 @@ function getId() {
   return id;
 }
 
+// Récupérer les données de l'API associées à l'ID
+function fetchProductInfo(id) {
+  fetch("http://localhost:3000/api/products/" + id)
+  .then(response => response.json())
+  .then(selectProduct => {
+    console.log(selectProduct);
+    displayProduct(selectProduct);
+  });
+}
+
 // Définir les emplacements d'insertion des données
 function displayProduct(selectProduct) {
   // création de la balise img dans le html et insertion de l'image
@@ -36,22 +46,8 @@ function displayProduct(selectProduct) {
   }
 }
 
-// Récupérer les données de l'API associées à l'ID
-function fetchProductInfo(id) {
-  fetch("http://localhost:3000/api/products/" + id)
-  .then(response => response.json())
-  .then(selectProduct => {
-    console.log(selectProduct);
-    displayProduct(selectProduct);
-  });
-}
 
 
 // Appel des fonctions
 var id = getId();
 fetchProductInfo(id);
-
-// fetch("http://localhost:3000/api/products/" + id)
-//   .then(response => response.json())
-//   .then(selectProduct => {
-//     console.log(selectProduct)});
