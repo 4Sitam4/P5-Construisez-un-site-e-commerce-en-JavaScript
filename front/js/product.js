@@ -49,10 +49,9 @@ function displayProduct(selectProduct) {
 // Ajouter le produit au panier
 function addToCart() {
   // Récupérer les données du produit
+  const id = getId();
   const color = document.querySelector("#colors").value;
   const quantity = document.querySelector("#quantity").value;
-  
-  
   
   
   // Vérifier que les données sont correctes
@@ -67,7 +66,6 @@ function addToCart() {
     return;
   }
   
-  const id = getId();
   const title = document.querySelector("#title").innerText;
   const imageUrl = document.querySelector(".item__img img").src;
   const altTxt = document.querySelector(".item__img img").alt;
