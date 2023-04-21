@@ -39,7 +39,6 @@ function fetchProductInfoFromCart() {
 
 
 // ------------------------------ displayCart ----------------------------------- //
-
 // Afficher les données des produits dans le panier
 function displayCart(cartData) {
     // Création de l'élément article
@@ -144,9 +143,126 @@ function displayCart(cartData) {
 
     // Ajout de l'article à la section avec l'ID 'cart__items'
     document.getElementById('cart__items').appendChild(article);
+
+    // Ajout d'un écouteur d'événement pour le bouton de suppression
+    deleteItemListener();
+    // Ajout d'un écouteur d'événement pour l'input de quantité
+    changeQuantityListener();
+    // Calcul du prix total et affichage
+    totalPrice();
+    // Calcul et affichage du nombre d'articles dans le panier
+    totalQuantity();
+}
+// ------------------------------ --- ----------------------------------- //
+
+// ------------------------------ deleteItem ----------------------------------- //
+// Supprimer un produit du panier
+function deleteItem() {
+    // Récupérer l'id du produit
+    let id = this.parentNode.parentNode.parentNode.parentNode.getAttribute('data-id');
+    // Récupérer la couleur du produit
+    let color = this.parentNode.parentNode.parentNode.parentNode.getAttribute('data-color');
+    // Récupérer les données du panier
+    let cart = getCart();
+    // Boucle pour trouver le produit à supprimer
+    for (let i = 0; i < cart.length; i++) {
+        if (cart[i].id === id && cart[i].color === color) {
+            cart.splice(i, 1);
+        }
+    }
+    // Mettre à jour le panier
+    localStorage.setItem('cart', JSON.stringify(cart));
+    // display none du produit supprimé (pour éviter un rechargement de la page)
+    this.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+
+    // appel updateCart pour mettre à jour le panier
+    updateCart();
+
+}
+// ------------------------------ --- ----------------------------------- //
+// Event listener pour le bouton de suppression
+function deleteItemListener() {
+    let deleteBtn = document.getElementsByClassName('deleteItem');
+    for (let i = 0; i < deleteBtn.length; i++) {
+        deleteBtn[i].addEventListener('click', deleteItem);
+    }
+}
+
+// ------------------------------ modifier la qty  ----------------------------------- //
+// Modifier la quantité d'un produit
+function changeQuantity() {
+    // Récupérer l'id du produit
+    let id = this.parentNode.parentNode.parentNode.parentNode.getAttribute('data-id');
+    // Récupérer la couleur du produit
+    let color = this.parentNode.parentNode.parentNode.parentNode.getAttribute('data-color');
+    // Récupérer les données du panier
+    let cart = getCart();
+    // Boucle pour trouver le produit à modifier
+    for (let i = 0; i < cart.length; i++) {
+        if (cart[i].id === id && cart[i].color === color) {
+            cart[i].quantity = this.value;
+        }
+    }
+    // Mettre à jour le panier du localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    // appel updateCart pour mettre à jour le panier
+    updateCart();
+}
+
+// Event listener pour l'input de quantité
+function changeQuantityListener() {
+    let quantityInput = document.getElementsByClassName('itemQuantity');
+    for (let i = 0; i < quantityInput.length; i++) {
+        quantityInput[i].addEventListener('change', changeQuantity);
+    }
 }
 
 // ------------------------------ --- ----------------------------------- //
+
+// ------------------------------ totalPrice ----------------------------------- //
+// Calculer le prix total du panier puis appel la fonction displayTotalPrice pour afficher le prix total
+function totalPrice() {
+    // Récupérer les données du panier
+    let cart = getCart();
+    // Initialiser le prix total
+    let total = 0;
+    // Boucle pour calculer le prix total
+    for (let i = 0; i < cart.length; i++) {
+        total += cart[i].price * cart[i].quantity;
+    }
+    // Afficher le prix total
+    displayTotalPrice(total);
+}
+function displayTotalPrice(total) {
+    // Afficher le prix total
+    document.getElementById('totalPrice').textContent = total;
+}
+// ------------------------------ --- ----------------------------------- //
+
+// ------------------------------ Total des produits dans le panier ----------------------------------- //
+// Calculer le nombre total de produits dans le panier et l'afficher
+function totalQuantity() {
+    // Récupérer les données du panier
+    let cart = getCart();
+    // Initialiser le nombre total de produits
+    let total = 0;
+    // Boucle pour calculer le nombre total de produits
+    for (let i = 0; i < cart.length; i++) {
+        total += parseInt(cart[i].quantity);
+    }
+
+    // Afficher le nombre total de produits
+    document.getElementById('totalQuantity').textContent = total;
+}
+
+// Function pour mettre à jour tous le visuel du panier (prix total, nombre de produits, etc...)
+function updateCart() {
+    // Mettre à jour le prix total
+    totalPrice();
+    // Mettre à jour le nombre d'articles dans le panier
+    totalQuantity();
+}
+
 
 // Appel des fonctions
 let cartData = getCart();

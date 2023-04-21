@@ -102,6 +102,7 @@ function addToCart() {
   // Ajouter le produit au panier LocalStorage
   cart.push(product);
   localStorage.setItem("cart", JSON.stringify(cart));
+  alert("Le produit a bien été ajouté au panier");
 }
 
 // bouton ajouter au panier
