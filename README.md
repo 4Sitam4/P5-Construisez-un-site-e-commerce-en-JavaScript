@@ -1,6 +1,5 @@
-# Kanap #
-
-## Projet 5 de OpenClassrooms par Mathis Becher ##
+# Projet 5 de OpenClassrooms : Kanap #
+par Mathis Becher
 
 ### Javascript des pages : ###
 
@@ -10,5 +9,4 @@
     - confirmation.js
 
 ### Dernière révision du projet le : ###
-
 21/04/2023
