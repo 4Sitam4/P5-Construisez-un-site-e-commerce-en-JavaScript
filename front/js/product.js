@@ -8,10 +8,10 @@ function getId() {
 // Récupérer les données de l'API associées à l'ID
 function fetchProductInfo(id) {
   fetch("http://localhost:3000/api/products/" + id)
-  .then(response => response.json())
-  .then(selectProduct => {
-    displayProduct(selectProduct);
-  });
+    .then((response) => response.json())
+    .then((selectProduct) => {
+      displayProduct(selectProduct);
+    });
 }
 
 // Définir les emplacements d'insertion des données
@@ -52,10 +52,9 @@ function addToCart() {
   const id = getId();
   const color = document.querySelector("#colors").value;
   const quantity = document.querySelector("#quantity").value;
-  
-  
+
   // Vérifier que les données sont correctes
-  
+
   // Vérifier que la quantité est supérieure à 0 et que la couleur est sélectionnée
   if (quantity < 1) {
     alert("Veuillez sélectionner une quantité supérieure à 0");
@@ -65,12 +64,12 @@ function addToCart() {
     alert("Veuillez sélectionner une couleur");
     return;
   }
-  
+
   const title = document.querySelector("#title").innerText;
   const imageUrl = document.querySelector(".item__img img").src;
   const altTxt = document.querySelector(".item__img img").alt;
   const price = document.querySelector("#price").innerText;
-  
+
   // Créer un objet avec les données du produit
   const product = {
     id: id,
@@ -79,7 +78,7 @@ function addToCart() {
     altTxt: altTxt,
     price: price,
     color: color,
-    quantity: quantity
+    quantity: quantity,
   };
   // ajouter le produit au local storage
   let cart = JSON.parse(localStorage.getItem("cart"));
@@ -93,7 +92,8 @@ function addToCart() {
       if (element.id === product.id && element.color === product.color) {
         // Si le produit est déjà dans le panier, ajouter la quantité
         // convertir la quantité en nombre entier avec parseInt puis reconversion en string avec stringify dans le LocalStorage
-        element.quantity = parseInt(element.quantity) + parseInt(product.quantity);
+        element.quantity =
+          parseInt(element.quantity) + parseInt(product.quantity);
         localStorage.setItem("cart", JSON.stringify(cart));
         return;
       }

@@ -11,7 +11,7 @@ function displayOrderId(orderId) {
 }
 // Fonction pour supprimer le localStorage après l'affichage de l'ID de la commande
 function deleteLocalStorage() {
-    localStorage.clear();
+  localStorage.clear();
 }
 // Appel de la fonction initiale
 getOrderID();

@@ -3,16 +3,15 @@
 function fetchProducts() {
   // Requet sur l'api pour récupérer les données
   fetch("http://localhost:3000/api/products")
-    .then(reponse => reponse.json())
-    .then(data => displayCanaps(data));
+    .then((reponse) => reponse.json())
+    .then((data) => displayCanaps(data));
 }
 
 // Créer une boucle pour afficher les données
 function displayCanaps(canaps) {
-  const section = document.querySelector('#items');
+  const section = document.querySelector("#items");
   for (let index = 0; index < canaps.length; index++) {
     const { _id, name, description, imageUrl, altText } = canaps[index];
-
 
     //Création de lien
     const link = document.createElement("a");
@@ -41,7 +40,6 @@ function displayCanaps(canaps) {
 
     link.appendChild(article);
     section.appendChild(link);
-
   }
 }
 
