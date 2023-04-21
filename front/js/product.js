@@ -56,7 +56,7 @@ function addToCart() {
   
   // Vérifier que les données sont correctes
   
-  // Vérifier que la quantité est supérieure à 0
+  // Vérifier que la quantité est supérieure à 0 et que la couleur est sélectionnée
   if (quantity < 1) {
     alert("Veuillez sélectionner une quantité supérieure à 0");
     return;

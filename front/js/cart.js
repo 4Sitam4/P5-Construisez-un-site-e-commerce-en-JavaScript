@@ -109,7 +109,6 @@ function displayCart(cartData) {
     deleteBtn.classList.add('deleteItem');
     deleteBtn.textContent = 'Supprimer';
 
-
     // Ajout des éléments de description à la div de description
     descriptionDiv.appendChild(title);
     descriptionDiv.appendChild(color);
@@ -152,6 +151,8 @@ function displayCart(cartData) {
     totalPrice();
     // Calcul et affichage du nombre d'articles dans le panier
     totalQuantity();
+    // Ajout du listener pour le bouton de validation du panier
+    validateFormListener();
 }
 // ------------------------------ --- ----------------------------------- //
 
@@ -263,6 +264,106 @@ function updateCart() {
     totalQuantity();
 }
 
+// ------------------------------ Formulaire de commande client ----------------------------------- //
+// Récupérer et valider les données du formulaire
+function getAndValidateForm() {
+    // Récupérer les données du formulaire
+    let firstName = document.getElementById('firstName').value;
+    let lastName = document.getElementById('lastName').value;
+    let address = document.getElementById('address').value;
+    let city = document.getElementById('city').value;
+    let email = document.getElementById('email').value;
+
+    // regex pour l'email (2 à 50 caractères, accepte les chiffres, les lettres, les espaces, les tirets vérifie la présence d'un @ et d'un .)
+    const regexMail = /^[A-Za-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
+    
+    // regex pour le nom et le prénom 
+    // (2 à 15 caractères, pas de chiffres, pas de caractères spéciaux, accepte les espaces et les tirets)
+    const regexName = /^(?=.{2,15}$)[A-Za-z]+([- ]?[A-Za-z]+)*$/;
+
+    // regex pour l'adresse (5 à 50 caractères, accepte les chiffres, les lettres, les espaces et les tirets)
+    const regexAddress = /^[A-Za-z0-9 -]{5,50}$/;
+
+
+    // regex pour la ville (2 à 50 caractères, accepte les lettres, les espaces et les tirets)
+    const regexCity = /^[A-Za-z -]{2,50}$/;
+
+
+    // Vérifier que le panier n'est pas vide
+    if (getCart().length === 0) {
+        alert('Votre panier est vide');
+        return false;
+    }
+    // Valider les données du formulaire
+    if (firstName === '' || lastName === '' || address === '' || city === '' || email === '') {
+        alert('Veuillez remplir tous les champs du formulaire');
+        return false;
+    }
+    if (!regexMail.test(email)) {
+        alert('Veuillez entrer une adresse email valide');
+        return false;
+    }
+    if (!regexName.test(firstName) || !regexName.test(lastName)) {
+        alert('Veuillez entrer un nom et un prénom valide');
+        return false;
+    }
+    if (!regexAddress.test(address)) {
+        alert('Veuillez entrer une adresse postal valide');
+        return false;
+    }
+    if (!regexCity.test(city)) {
+        alert('Veuillez entrer un nom de ville valide');
+        return false;
+    }
+
+    // Récupérer les id des produits du panier et les mettre dans un tableau pour l'envoyer au serveur
+    const ids = getCart().map(item => item.id);
+    // Créer un objet order pour l'envoyer au serveur avec les données du formulaire et les id des produits du panier
+    let order = {
+        contact: {
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            email: email
+        },
+        products: ids
+    }
+    sendOrder(order);
+}
+
+// Event listener pour le bouton de validation du formulaire
+function validateFormListener() {
+    document.getElementById('order').addEventListener('click', (e)=>{
+        e.preventDefault();
+        getAndValidateForm();
+    });
+}
+// ------------------------------ END Formulaire de commande client ----------------------------------- //
+
+// ------------------------------ Envoi de la commande au serveur ----------------------------------- //
+// Envoyer la commande au serveur
+function sendOrder(order) {
+    // Requête POST pour envoyer la commande au serveur
+    fetch('http://localhost:3000/api/products/order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(order)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            // Enregistrer l'id de la commande dans le localStorage
+            localStorage.setItem('orderId', data.orderId);
+            // Rediriger vers la page de confirmation de commande
+            window.location.href = 'confirmation.html';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
 // Appel des fonctions
 let cartData = getCart();
