@@ -15,6 +15,7 @@ async function fetchProductInfoFromCart() {
   if (cart.length === 0) {
     // si le panier est vide, afficher un message d'erreur
     alert("Votre panier est vide");
+    return;
   }
 
   for (let i = 0; i < cart.length; i++) {
@@ -341,11 +342,6 @@ function getAndValidateForm() {
   // regex pour la ville (2 à 50 caractères, accepte les lettres, les espaces et les tirets)
   const regexCity = /^[A-Za-z -]{2,50}$/;
 
-  // Vérifier que le panier n'est pas vide
-  if (getCart().length === 0) {
-    alert("Votre panier est vide");
-    return false;
-  }
   // Valider les données du formulaire
   // Si un champ est vide ou ne correspond pas à la regex, afficher une alerte et empêcher l'envoi du formulaire
   if (
@@ -362,8 +358,12 @@ function getAndValidateForm() {
     alert("Veuillez entrer une adresse email valide");
     return false;
   }
-  if (!regexName.test(firstName) || !regexName.test(lastName)) {
-    alert("Veuillez entrer un nom et un prénom valide");
+  if (!regexName.test(firstName)){
+    alert("Veuillez entrer un Prénom valide");
+    return false;
+  }
+  if (!regexName.test(lastName)) {
+    alert("Veuillez entrer un Nom valide");
     return false;
   }
   if (!regexAddress.test(address)) {
