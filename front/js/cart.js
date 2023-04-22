@@ -2,28 +2,31 @@
 function getCart() {
   let cart = localStorage.getItem("cart");
   if (cart === null) {
+    // si le panier n'existe pas, créer un panier vide
     return (cart = []);
   } else {
-    return JSON.parse(cart);
+    return JSON.parse(cart); // si le panier existe, retourner le panier
   }
 }
 
 // Récupérer les données complètes des produits dans le panier
 async function fetchProductInfoFromCart() {
-  // Récupérer l'id des produits dans le panier
   let cart = getCart();
   if (cart.length === 0) {
+    // si le panier est vide, afficher un message d'erreur
     alert("Votre panier est vide");
   }
-  // Boucle pour récupérer les données des produits
+
   for (let i = 0; i < cart.length; i++) {
-    let id = cart[i].id;
-    // Requête sur l'API pour récupérer les données
+    // pour chaque élément du panier, récupérer les données du produit
+    let id = cart[i].id; // récupérer l'id du produit
+
     try {
       const response = await fetch("http://localhost:3000/api/products/" + id);
       const data = await response.json();
 
       const product = {
+        // créer un objet avec les données du produit
         id: id,
         title: data.name,
         price: data.price,
@@ -33,11 +36,14 @@ async function fetchProductInfoFromCart() {
         altTxt: data.altTxt,
       };
 
-      displayCart(product);
+      displayCart(product); // appeler la fonction displayCart pour afficher les données du produit
     } catch (error) {
+      // si une erreur est survenue, afficher un message d'erreur
       console.error("Erreur:", error);
     }
   }
+
+  await totalPrice(); // appeler la fonction totalPrice après avoir récupéré les informations des produits
 }
 
 // ----------------------------------- displayCart ----------------------------------- //
@@ -215,11 +221,11 @@ function deleteItem() {
   // appel updateCart pour mettre à jour le panier
   updateCart();
 }
-// ------------------------------ --- ----------------------------------- //
 // Event listener pour le bouton de suppression
 function deleteItemListener() {
   let deleteBtn = document.getElementsByClassName("deleteItem");
   for (let i = 0; i < deleteBtn.length; i++) {
+    // boucle pour ajouter l'event listener à chaque bouton
     deleteBtn[i].addEventListener("click", deleteItem);
   }
 }
@@ -259,18 +265,29 @@ function changeQuantityListener() {
 
 // ------------------------------ totalPrice ----------------------------------- //
 // Calculer le prix total du panier puis appel la fonction displayTotalPrice pour afficher le prix total
-function totalPrice() {
-  // Récupérer les données du panier
-  let cart = getCart();
-  // Initialiser le prix total
-  let total = 0;
-  // Boucle pour calculer le prix total
+async function totalPrice() {
+  let cart = getCart(); // récupérer les données du panier
+  let total = 0; // initialiser le prix total à 0
+
   for (let i = 0; i < cart.length; i++) {
-    total += cart[i].price * cart[i].quantity;
+    // boucle pour calculer le prix total
+    let id = cart[i].id; // récupérer l'id du produit
+
+    try {
+      // récupérer les données du produit
+      const response = await fetch("http://localhost:3000/api/products/" + id);
+      const data = await response.json();
+
+      total += data.price * cart[i].quantity; // calculer le prix total
+    } catch (error) {
+      // afficher l'erreur en cas d'erreur
+      console.error("Erreur:", error);
+    }
   }
-  // Afficher le prix total
-  displayTotalPrice(total);
+
+  displayTotalPrice(total); // appel la fonction displayTotalPrice pour afficher le prix total
 }
+
 function displayTotalPrice(total) {
   // Afficher le prix total
   document.getElementById("totalPrice").textContent = total;
@@ -371,14 +388,14 @@ function getAndValidateForm() {
     },
     products: ids,
   };
-  sendOrder(order);
+  sendOrder(order); // Envoyer la commande au serveur
 }
 
 // Event listener pour le bouton de validation du formulaire
 function validateFormListener() {
   document.getElementById("order").addEventListener("click", (e) => {
-    e.preventDefault();
-    getAndValidateForm();
+    e.preventDefault(); // empêcher le rechargement de la page
+    getAndValidateForm(); // Récupérer et valider les données du formulaire
   });
 }
 
@@ -407,6 +424,7 @@ async function sendOrder(order) {
   }
 }
 
+// Fonction pour attacher les event listeners
 function attachEventListeners() {
   deleteItemListener();
   changeQuantityListener();

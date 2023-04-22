@@ -11,6 +11,7 @@ function fetchProducts() {
 function displayCanaps(canaps) {
   const section = document.querySelector("#items");
   for (let index = 0; index < canaps.length; index++) {
+    // Boucle pour afficher les produits
     const { _id, name, description, imageUrl, altText } = canaps[index];
 
     //Création de lien
