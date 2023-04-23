@@ -1,12 +1,12 @@
 // Récupérer l'ID du produit
 function getId() {
-  const url = new URL(window.location.href);
-  const id = url.searchParams.get("id");
-  return id;
+  const url = new URL(window.location.href); // récupérer l'url de la page
+  return url.searchParams.get("id");
 }
 
 // Récupérer les données de l'API associées à l'ID
-function fetchProductInfo(id) {
+function fetchProductInfo() {
+  let id = getId();
   fetch("http://localhost:3000/api/products/" + id)
     .then((response) => response.json())
     .then((selectProduct) => {
@@ -105,11 +105,11 @@ function addToCart() {
   const product = getProductData();
 
   // Vérification des données du produit
-  if (!isDataValid(product)) {
+  if (!isDataValid(product)) { // si les données ne sont pas valides, on arrête la fonction
     return;
   }
 
-  let cart = getCartFromLocalStorage();
+  const cart = getCartFromLocalStorage(); 
   const productIndex = isProductInCart(cart, product);
 
   if (productIndex >= 0) {
@@ -131,6 +131,10 @@ function btnCartListener() {
 }
 
 // Appel des fonctions
-var id = getId();
-fetchProductInfo(id);
-btnCartListener();
+function main() { // fonction principale
+  getId(); // récupérer l'ID du produit
+  fetchProductInfo(); // récupérer les données de l'API associées à l'ID
+  btnCartListener(); // écouteur sur le bouton "Ajouter au panier" s'execute apres le chargement de la page
+}
+
+main(); // appel de la fonction principale

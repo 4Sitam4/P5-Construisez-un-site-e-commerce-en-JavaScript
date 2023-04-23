@@ -10,9 +10,8 @@ function fetchProducts() {
 // Créer une boucle pour afficher les données
 function displayCanaps(canaps) {
   const section = document.querySelector("#items");
-  for (let index = 0; index < canaps.length; index++) {
-    // Boucle pour afficher les produits
-    const { _id, name, description, imageUrl, altText } = canaps[index];
+  canaps.forEach(({ _id, name, description, imageUrl, altText }) => {
+    // forEach à traver l'array des canapés et pour chaque canapé on récupère les données et on les affiches
 
     //Création de lien
     const link = document.createElement("a");
@@ -41,7 +40,8 @@ function displayCanaps(canaps) {
 
     link.appendChild(article);
     section.appendChild(link);
-  }
+  });
 }
+
 
 fetchProducts();

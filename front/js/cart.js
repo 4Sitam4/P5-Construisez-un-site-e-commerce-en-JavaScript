@@ -1,6 +1,6 @@
 // Récupérer les données du panier
 function getCart() {
-  let cart = localStorage.getItem("cart");
+  const cart = localStorage.getItem("cart");
   if (cart === null) {
     // si le panier n'existe pas, créer un panier vide
     return (cart = []);
@@ -11,16 +11,15 @@ function getCart() {
 
 // Récupérer les données complètes des produits dans le panier
 async function fetchProductInfoFromCart() {
-  let cart = getCart();
+  const cart = getCart();
   if (cart.length === 0) {
     // si le panier est vide, afficher un message d'erreur
     alert("Votre panier est vide");
     return;
   }
 
-  for (let i = 0; i < cart.length; i++) {
+  cart.forEach(async ({id, quantity, color}) => {
     // pour chaque élément du panier, récupérer les données du produit
-    let id = cart[i].id; // récupérer l'id du produit
 
     try {
       const response = await fetch("http://localhost:3000/api/products/" + id);
@@ -28,11 +27,11 @@ async function fetchProductInfoFromCart() {
 
       const product = {
         // créer un objet avec les données du produit
-        id: id,
+        id,
         title: data.name,
         price: data.price,
-        quantity: cart[i].quantity,
-        color: cart[i].color,
+        quantity,
+        color,
         imageUrl: data.imageUrl,
         altTxt: data.altTxt,
       };
@@ -42,7 +41,7 @@ async function fetchProductInfoFromCart() {
       // si une erreur est survenue, afficher un message d'erreur
       console.error("Erreur:", error);
     }
-  }
+  });
 
   await totalPrice(); // appeler la fonction totalPrice après avoir récupéré les informations des produits
 }
@@ -201,19 +200,19 @@ function displayCart(cartData) {
 // Supprimer un produit du panier
 function deleteItem() {
   // Récupérer l'id du produit
-  let id =
+  const id =
     this.parentNode.parentNode.parentNode.parentNode.getAttribute("data-id");
   // Récupérer la couleur du produit
-  let color =
+  const color =
     this.parentNode.parentNode.parentNode.parentNode.getAttribute("data-color");
   // Récupérer les données du panier
-  let cart = getCart();
-  // Boucle pour trouver le produit à supprimer
-  for (let i = 0; i < cart.length; i++) {
-    if (cart[i].id === id && cart[i].color === color) {
-      cart.splice(i, 1);
+  const cart = getCart(); 
+  // forEach pour trouver le produit à supprimer
+  cart.forEach((item, index) => {
+    if (item.id === id && item.color === color) { 
+      cart.splice(index, 1); 
     }
-  }
+  });
   // Mettre à jour le panier
   localStorage.setItem("cart", JSON.stringify(cart));
   // display none du produit supprimé (pour éviter un rechargement de la page)
@@ -222,32 +221,33 @@ function deleteItem() {
   // appel updateCart pour mettre à jour le panier
   updateCart();
 }
+
 // Event listener pour le bouton de suppression
 function deleteItemListener() {
-  let deleteBtn = document.getElementsByClassName("deleteItem");
-  for (let i = 0; i < deleteBtn.length; i++) {
-    // boucle pour ajouter l'event listener à chaque bouton
-    deleteBtn[i].addEventListener("click", deleteItem);
-  }
+  const deleteBtn = document.getElementsByClassName("deleteItem");
+  Array.from(deleteBtn).forEach((btn) => {
+    // forEach pour ajouter l'event listener à chaque bouton
+    btn.addEventListener("click", deleteItem);
+  });
 }
 
 // ------------------------------ modifier la qty  ----------------------------------- //
 // Modifier la quantité d'un produit
 function changeQuantity() {
   // Récupérer l'id du produit
-  let id =
+  const id =
     this.parentNode.parentNode.parentNode.parentNode.getAttribute("data-id");
   // Récupérer la couleur du produit
-  let color =
+  const color =
     this.parentNode.parentNode.parentNode.parentNode.getAttribute("data-color");
   // Récupérer les données du panier
-  let cart = getCart();
-  // Boucle pour trouver le produit à modifier
-  for (let i = 0; i < cart.length; i++) {
-    if (cart[i].id === id && cart[i].color === color) {
-      cart[i].quantity = this.value;
+  const cart = getCart();
+  // forEach pour trouver le produit à modifier
+  cart.forEach(item => {
+    if (item.id === id && item.color === color) {
+      item.quantity = this.value;
     }
-  }
+  });
   // Mettre à jour le panier du localStorage
   localStorage.setItem("cart", JSON.stringify(cart));
   // appel updateCart pour mettre à jour le panier
@@ -256,10 +256,10 @@ function changeQuantity() {
 
 // Event listener pour l'input de quantité
 function changeQuantityListener() {
-  let quantityInput = document.getElementsByClassName("itemQuantity");
-  for (let i = 0; i < quantityInput.length; i++) {
-    quantityInput[i].addEventListener("change", changeQuantity);
-  }
+  const quantityInput = document.getElementsByClassName("itemQuantity");
+  Array.from(quantityInput).forEach(input => { // forEach pour ajouter l'event listener à chaque input
+    input.addEventListener("change", changeQuantity);
+  });
 }
 
 // ------------------------------ --- ----------------------------------- //
@@ -267,24 +267,23 @@ function changeQuantityListener() {
 // ------------------------------ totalPrice ----------------------------------- //
 // Calculer le prix total du panier puis appel la fonction displayTotalPrice pour afficher le prix total
 async function totalPrice() {
-  let cart = getCart(); // récupérer les données du panier
+  const cart = getCart(); // récupérer les données du panier
   let total = 0; // initialiser le prix total à 0
 
-  for (let i = 0; i < cart.length; i++) {
-    // boucle pour calculer le prix total
-    let id = cart[i].id; // récupérer l'id du produit
+  await Promise.all(cart.map(async ({id, quantity}) => {
+    // map pour récupérer les données de chaque produit
 
     try {
       // récupérer les données du produit
       const response = await fetch("http://localhost:3000/api/products/" + id);
       const data = await response.json();
 
-      total += data.price * cart[i].quantity; // calculer le prix total
+      total += data.price * quantity; // calculer le prix total
     } catch (error) {
       // afficher l'erreur en cas d'erreur
       console.error("Erreur:", error);
     }
-  }
+  }));
 
   displayTotalPrice(total); // appel la fonction displayTotalPrice pour afficher le prix total
 }
@@ -299,13 +298,13 @@ function displayTotalPrice(total) {
 // Calculer le nombre total de produits dans le panier et l'afficher
 function totalQuantity() {
   // Récupérer les données du panier
-  let cart = getCart();
+  const cart = getCart();
   // Initialiser le nombre total de produits
   let total = 0;
-  // Boucle pour calculer le nombre total de produits
-  for (let i = 0; i < cart.length; i++) {
-    total += parseInt(cart[i].quantity);
-  }
+  // forEach pour calculer le nombre total de produits
+  cart.forEach(item => {
+    total += parseInt(item.quantity);
+  });
 
   // Afficher le nombre total de produits
   document.getElementById("totalQuantity").textContent = total;
@@ -435,5 +434,4 @@ function attachEventListeners() {
 
 // ------------------------------ Appel des fonctions ----------------------------------- //
 // Appel des fonctions
-let cartData = getCart();
-fetchProductInfoFromCart(cartData);
+fetchProductInfoFromCart();
