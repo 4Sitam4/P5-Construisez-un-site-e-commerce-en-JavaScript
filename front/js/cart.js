@@ -3,7 +3,7 @@ function getCart() {
   const cart = localStorage.getItem("cart");
   if (cart === null) {
     // si le panier n'existe pas, créer un panier vide
-    return (cart = []);
+    return [];
   } else {
     return JSON.parse(cart); // si le panier existe, retourner le panier
   }
